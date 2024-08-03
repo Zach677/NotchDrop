@@ -1,0 +1,53 @@
+name: CI - Build Application
+on:
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'LICENSE'
+      - '**.md'
+  pull_request:
+  release:
+    types: [created]
+  workflow_dispatch:
+
+permissions: write-all
+
+jobs:
+  build-mac:
+    name: Build for macOS (Universal)
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up env.APP_CONF to Debug
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: |
+          echo "APP_CONF=Debug" >> $GITHUB_ENV
+      - name: Set up env.APP_CONF to Release
+        if: github.event_name == 'release'
+        run: |
+          echo "APP_CONF=Release" >> $GITHUB_ENV
+      - name: Build for macOS (Universal)
+        shell: bash
+        run: |
+          xcodebuild -project 'NotchDrop.xcodeproj' -scheme 'NotchDrop' -configuration '${{ env.APP_CONF }}' -destination 'platform=macOS' build  -derivedDataPath 'build'
+      - name: Create DMG
+        shell: bash
+        run: |
+          hdiutil create -volname "NotchDrop" -srcfolder "build/Build/Products/${{ env.APP_CONF }}/NotchDrop.app" -ov -format UDZO "NotchDrop.dmg"
+
+      - name: Upload DMG Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NotchDrop
+          path: NotchDrop.dmg
+      - name: Upload DMG to GitHub Release
+        if: github.event_name == 'release'
+        uses: actions/upload-release-asset@v1.0.2
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: NotchDrop.dmg
+          asset_name: NotchDrop.dmg
+          asset_content_type: application/x-apple-diskimage
