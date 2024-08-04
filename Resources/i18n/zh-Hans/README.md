@@ -4,6 +4,21 @@
 
 ![App Store Icon](./Download_on_the_Mac_App_Store_Badge_CNSC_RGB_blk_092917.svg)
 
+## 🚀 安装
+
+### 手动安装
+
+请从 [Releases](https://github.com/Zach677/NotchDrop/releases) 页面下载最新版本。
+
+### Homebrew
+
+```shell
+brew tap zach677/star && brew install notchdrop
+```
+
+> [!NOTE]
+> 这个Homebrew仓库是我私人仓库，如介意请使用手动安装
+
 ## 👀 预览
 
 ![屏幕截图](../../截屏2024-07-08%2003.14.34.png)
@@ -17,10 +32,6 @@
 - [x] 按住 Option 键并点击 X 按钮删除文件
 - [x] 完全开源并注重隐私
 - [x] 如果你自己动手编译，那就完全免费
-
-## 🚀 使用方法
-
-请从 [Releases](https://github.com/Lakr233/NotchDrop/releases) 页面下载最新版本。
 
 ## 🧑‍⚖️ 许可证
 

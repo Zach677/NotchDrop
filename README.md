@@ -6,6 +6,21 @@ Transform your MacBook's notch into a convenient file drop zone.
 
 [![App Store Icon](./Resources/Download_on_the_App_Store_Badge_US-UK_RGB_blk_092917.svg)](https://apps.apple.com/app/notchdrop/id6529528324)
 
+## 🚀 Install
+
+### Manually Install
+
+Download the latest version from [Releases](https://github.com/Zach677/NotchDrop/releases)
+
+### Homebrew
+
+```shell
+brew tap zach677/star && brew install notchdrop
+```
+
+> [!NOTE]
+> The Homebrew repo is my private repo, if you mind, please use Manually install
+
 ## 👀 Preview
 
 ![Screenshot](./Resources/截屏2024-07-08%2003.14.34.png)
