@@ -27,6 +27,7 @@ struct NotchSettingsView: View {
                     Text(NSLocalizedString("Launch at Login", comment: ""))
                 }
                 .padding(.leading, 60) // Adjust the padding to reduce the space
+
                 Spacer()
             }
 
@@ -38,7 +39,6 @@ struct NotchSettingsView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
                 .frame(width: 200)
-
                 if tvm.selectedFileStorageTime == .custom {
                     TextField("Days", value: $tvm.customStorageTime, formatter: NumberFormatter())
                         .textFieldStyle(RoundedBorderTextFieldStyle())
