@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up env.APP_CONF to Debug
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        if: github.event_name != 'release'
         run: |
           echo "APP_CONF=Debug" >> $GITHUB_ENV
       - name: Set up env.APP_CONF to Release
