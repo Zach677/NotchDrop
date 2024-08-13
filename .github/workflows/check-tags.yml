@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Git
         run: |
@@ -27,7 +27,7 @@ jobs:
         id: check_tags
         run: |
           latest_local_tag=$(git tag --list | grep -v "AAPL" | sort -V | tail -n 1)
-          latest_upstream_tag=$(git ls-remote --tags upstream | grep -v "AAPL" | awk -F'/' '{print $3}' | sort -V | tail -n 1)
+          latest_upstream_tag=$(git ls-remote --tags upstream | grep -v "AAPL" | awk -F'/' '{print $3}' | grep -v '{}$' | sort -V | tail -n 1)
 
           echo "Latest local tag: $latest_local_tag"
           echo "Latest upstream tag: $latest_upstream_tag"
@@ -41,10 +41,10 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.check_tags.outputs.new_release == 'true'
-        uses: actions/create-release@v1
+        uses: ncipollo/release-action@v1.14.0
         with:
-          tag_name: ${{ steps.check_tags.outputs.latest_upstream_tag }}
-          release_name: Release ${{ steps.check_tags.outputs.latest_upstream_tag }}
+          tag: ${{ steps.check_tags.outputs.latest_upstream_tag }}
+          name: ${{ steps.check_tags.outputs.latest_upstream_tag }}
           body: 'Automated release for tag ${{ steps.check_tags.outputs.latest_upstream_tag }}'
           draft: false
           prerelease: false
