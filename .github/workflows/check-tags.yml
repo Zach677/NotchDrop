@@ -15,8 +15,8 @@ jobs:
 
       - name: Set up Git
         run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
+          git config --global user.name "Zach"
+          git config --global user.email "i@ssstttar.com"
 
       - name: Fetch all tags from upstream
         run: |
@@ -27,7 +27,7 @@ jobs:
         id: check_tags
         run: |
           latest_local_tag=$(git tag --list | grep -v "AAPL" | sort -V | tail -n 1)
-          latest_upstream_tag=$(git tag --list --remote upstream | grep -v "AAPL" | sort -V | tail -n 1)
+          latest_upstream_tag=$(git ls-remote --tags upstream | grep -v "AAPL" | awk -F'/' '{print $3}' | sort -V | tail -n 1)
 
           echo "Latest local tag: $latest_local_tag"
           echo "Latest upstream tag: $latest_upstream_tag"
