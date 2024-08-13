@@ -33,10 +33,10 @@ jobs:
           echo "Latest upstream tag: $latest_upstream_tag"
 
           if [ "$latest_local_tag" != "$latest_upstream_tag" ]; then
-            echo "::set-output name=new_release::true"
-            echo "::set-output name=latest_upstream_tag::$latest_upstream_tag"
+            echo new_release=true >> $GITHUB_OUTPUT
+            echo latest_upstream_tag=$latest_upstream_tag >> $GITHUB_OUTPUT
           else
-            echo "::set-output name=new_release::false"
+            echo new_release=false >> $GITHUB_OUTPUT
           fi
 
       - name: Create GitHub Release
