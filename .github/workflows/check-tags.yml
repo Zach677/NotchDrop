@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main # 你可以根据需要调整分支
+  workflow_dispatch:
 
 jobs:
   check-tags:
