@@ -4,7 +4,6 @@ on:
     branches:
       - '**'
     paths-ignore:
-      - '.github/'
       - 'LICENSE'
       - '**.md'
   pull_request:
