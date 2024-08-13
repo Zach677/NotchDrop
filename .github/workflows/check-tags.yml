@@ -1,0 +1,52 @@
+name: Check Upstream Tags and Create Release
+
+on:
+  push:
+    branches:
+      - main # 你可以根据需要调整分支
+
+jobs:
+  check-tags:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Fetch all tags from upstream
+        run: |
+          git remote add upstream https://github.com/Lakr233/NotchDrop
+          git fetch upstream --tags
+
+      - name: Filter and compare tags
+        id: check_tags
+        run: |
+          latest_local_tag=$(git tag --list | grep -v "AAPL" | sort -V | tail -n 1)
+          latest_upstream_tag=$(git tag --list --remote upstream | grep -v "AAPL" | sort -V | tail -n 1)
+
+          echo "Latest local tag: $latest_local_tag"
+          echo "Latest upstream tag: $latest_upstream_tag"
+
+          if [ "$latest_local_tag" != "$latest_upstream_tag" ]; then
+            echo "::set-output name=new_release::true"
+            echo "::set-output name=latest_upstream_tag::$latest_upstream_tag"
+          else
+            echo "::set-output name=new_release::false"
+          fi
+
+      - name: Create GitHub Release
+        if: steps.check_tags.outputs.new_release == 'true'
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ steps.check_tags.outputs.latest_upstream_tag }}
+          release_name: Release ${{ steps.check_tags.outputs.latest_upstream_tag }}
+          body: 'Automated release for tag ${{ steps.check_tags.outputs.latest_upstream_tag }}'
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
