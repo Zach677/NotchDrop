@@ -1,7 +1,14 @@
 name: CI - Build Application
 on:
-  repository_dispatch:
-    types: [release_created]
+  push:
+    branches:
+      - '**'
+    paths-ignore:
+      - 'LICENSE'
+      - '**.md'
+  pull_request:
+  release:
+    types: [created]
   workflow_dispatch:
 
 permissions: write-all
@@ -15,6 +22,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up env.APP_CONF to Release
+        if: github.event_name == 'release'
         run: |
           echo "APP_CONF=Release" >> $GITHUB_ENV
       - name: Build for macOS (Universal)
@@ -32,6 +40,7 @@ jobs:
           name: NotchDrop
           path: NotchDrop.dmg
       - name: Upload DMG to GitHub Release
+        if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: NotchDrop.dmg
