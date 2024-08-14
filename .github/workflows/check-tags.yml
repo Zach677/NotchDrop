@@ -24,6 +24,16 @@ jobs:
           git remote add upstream https://github.com/Lakr233/NotchDrop
           git fetch upstream --tags
 
+      - name: Debug Local Tags
+        run: |
+          echo "Local tags:"
+          git tag --list | sort -V
+
+      - name: Debug Upstream Tags
+        run: |
+          echo "Upstream tags:"
+          git ls-remote --tags upstream | awk -F'/' '{print $3}' | grep -v '{}$' | sort -V
+
       - name: Filter and compare tags
         id: check_tags
         run: |
@@ -38,7 +48,18 @@ jobs:
             echo latest_upstream_tag=$latest_upstream_tag >> $GITHUB_OUTPUT
           else
             echo new_release=false >> $GITHUB_OUTPUT
-          fi
+
+      - name: List all local tags for debugging
+        if: steps.check_tags.outputs.new_release == 'false'
+        run: |
+          echo "All local tags:"
+          git tag --list | sort -V
+
+      - name: List all upstream tags for debugging
+        if: steps.check_tags.outputs.new_release == 'false'
+        run: |
+          echo "All upstream tags:"
+          git ls-remote --tags upstream | awk -F'/' '{print $3}' | grep -v '{}$' | sort -V
 
       - name: Create GitHub Release
         if: steps.check_tags.outputs.new_release == 'true'
