@@ -32,7 +32,6 @@ jobs:
           name: NotchDrop
           path: NotchDrop.dmg
       - name: Upload DMG to GitHub Release
-        if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
           files: NotchDrop.dmg
