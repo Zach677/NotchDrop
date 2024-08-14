@@ -3,7 +3,7 @@ name: Check Upstream Tags and Create Release
 on:
   push:
     branches:
-      - main # 你可以根据需要调整分支
+      - main # Adjust the branch as needed
   workflow_dispatch:
 
 jobs:
@@ -19,55 +19,40 @@ jobs:
           git config --global user.name "Zach"
           git config --global user.email "i@ssstttar.com"
 
-      - name: Fetch all tags from upstream
+      - name: Fetch all tags from upstream in temporary directory
         run: |
+          mkdir temp_upstream_repo
+          cd temp_upstream_repo
+          git init
           git remote add upstream https://github.com/Lakr233/NotchDrop
           git fetch upstream --tags
+          latest_upstream_tag=$(git ls-remote --tags upstream | grep -v "AAPL" | awk -F'/' '{print $3}' | grep -v '{}$' | sort -V | tail -n 1)
+          echo "Latest upstream tag: $latest_upstream_tag"
+          echo latest_upstream_tag=$latest_upstream_tag >> $GITHUB_ENV
+          cd ..
 
-      - name: Debug Local Tags
-        run: |
-          echo "Local tags:"
-          git tag --list | sort -V
-
-      - name: Debug Upstream Tags
-        run: |
-          echo "Upstream tags:"
-          git ls-remote --tags upstream | awk -F'/' '{print $3}' | grep -v '{}$' | sort -V
-
-      - name: Filter and compare tags
-        id: check_tags
+      - name: Get latest local tag
         run: |
           latest_local_tag=$(git tag --list | grep -v "AAPL" | sort -V | tail -n 1)
-          latest_upstream_tag=$(git ls-remote --tags upstream | grep -v "AAPL" | awk -F'/' '{print $3}' | grep -v '{}$' | sort -V | tail -n 1)
-
           echo "Latest local tag: $latest_local_tag"
-          echo "Latest upstream tag: $latest_upstream_tag"
+          echo latest_local_tag=$latest_local_tag >> $GITHUB_ENV
 
+      - name: Compare tags
+        id: check_tags
+        run: |
           if [ "$latest_local_tag" != "$latest_upstream_tag" ]; then
             echo new_release=true >> $GITHUB_OUTPUT
-            echo latest_upstream_tag=$latest_upstream_tag >> $GITHUB_OUTPUT
           else
             echo new_release=false >> $GITHUB_OUTPUT
-
-      - name: List all local tags for debugging
-        if: steps.check_tags.outputs.new_release == 'false'
-        run: |
-          echo "All local tags:"
-          git tag --list | sort -V
-
-      - name: List all upstream tags for debugging
-        if: steps.check_tags.outputs.new_release == 'false'
-        run: |
-          echo "All upstream tags:"
-          git ls-remote --tags upstream | awk -F'/' '{print $3}' | grep -v '{}$' | sort -V
+          fi
 
       - name: Create GitHub Release
         if: steps.check_tags.outputs.new_release == 'true'
         uses: ncipollo/release-action@v1.14.0
         with:
-          tag: ${{ steps.check_tags.outputs.latest_upstream_tag }}
-          name: ${{ steps.check_tags.outputs.latest_upstream_tag }}
-          body: 'Automated release for tag ${{ steps.check_tags.outputs.latest_upstream_tag }}'
+          tag: ${{ env.latest_upstream_tag }}
+          name: ${{ env.latest_upstream_tag }}
+          body: 'Automated release for tag ${{ env.latest_upstream_tag }}'
           draft: false
           prerelease: false
         env:
