@@ -6,7 +6,6 @@ permissions:
   actions: write
 
 on:
-  push:
   schedule:
     - cron: '0 */6 * * *' # every 6 hour
   workflow_dispatch:
@@ -86,12 +85,13 @@ jobs:
         id: check_tags
         run: |
           if [ "$latest_local_tag" != "$latest_upstream_tag" ]; then
-            echo new_release=true >> $GITHUB_OUTPUT
+            echo "new_release=true" >> $GITHUB_ENV
           else
-            echo new_release=false >> $GITHUB_OUTPUT
+            echo "new_release=false" >> $GITHUB_ENV
+          fi
 
       - name: Create GitHub Release
-        if: steps.check_tags.outputs.new_release == 'true'
+        if: env.new_release == 'true'
         uses: ncipollo/release-action@v1.14.0
         with:
           tag: ${{ env.latest_upstream_tag }}
@@ -103,7 +103,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Trigger Build Workflow
-        if: steps.check_tags.outputs.new_release == 'true'
+        if: env.new_release == 'true'
         run: |
           curl -X POST -H "Accept: application/vnd.github.v3+json" \
           -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
