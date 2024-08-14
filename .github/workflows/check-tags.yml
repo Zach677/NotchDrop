@@ -19,6 +19,10 @@ jobs:
           git config --global user.name "Zach"
           git config --global user.email "i@ssstttar.com"
 
+      - name: Fetch local tags
+        run: |
+          git fetch --tags
+
       - name: Fetch all tags from upstream in temporary directory
         run: |
           mkdir temp_upstream_repo
