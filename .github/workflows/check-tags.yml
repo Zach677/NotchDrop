@@ -1,4 +1,4 @@
-name: Check Upstream Tags and Create Release
+name: Create Release
 
 on:
   push:
@@ -61,3 +61,11 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger Build Workflow
+        if: steps.check_tags.outputs.new_release == 'true'
+        run: |
+          curl -X POST -H "Accept: application/vnd.github.v3+json" \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          https://api.github.com/repos/Zach677/NotchDrop/dispatches \
+          -d '{"event_type":"release_created"}'

@@ -1,14 +1,7 @@
 name: CI - Build Application
 on:
-  push:
-    branches:
-      - '**'
-    paths-ignore:
-      - 'LICENSE'
-      - '**.md'
-  pull_request:
-  release:
-    types: [created]
+  repository_dispatch:
+    types: [release_created]
   workflow_dispatch:
 
 permissions: write-all
@@ -21,12 +14,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up env.APP_CONF to Debug
-        if: github.event_name != 'release'
-        run: |
-          echo "APP_CONF=Debug" >> $GITHUB_ENV
       - name: Set up env.APP_CONF to Release
-        if: github.event_name == 'release'
         run: |
           echo "APP_CONF=Release" >> $GITHUB_ENV
       - name: Build for macOS (Universal)
