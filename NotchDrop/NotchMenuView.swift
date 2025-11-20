@@ -15,37 +15,9 @@ struct NotchMenuView: View {
     var body: some View {
         HStack(spacing: vm.spacing) {
             close
-            github
-            donate
             settings
             clear
         }
-    }
-
-    var github: some View {
-        ColorButton(
-            color: ColorfulPreset.colorful.colors,
-            image: Image(.gitHub),
-            title: "GitHub"
-        )
-        .onTapGesture {
-            NSWorkspace.shared.open(productPage)
-            vm.notchClose()
-        }
-        .clipShape(RoundedRectangle(cornerRadius: vm.cornerRadius))
-    }
-
-    var donate: some View {
-        ColorButton(
-            color: ColorfulPreset.colorful.colors,
-            image: Image(systemName: "heart.fill"),
-            title: "Love Drop"
-        )
-        .onTapGesture {
-            NSWorkspace.shared.open(sponsorPage)
-            vm.notchClose()
-        }
-        .clipShape(RoundedRectangle(cornerRadius: vm.cornerRadius))
     }
 
     var close: some View {
@@ -78,7 +50,7 @@ struct NotchMenuView: View {
 
     var settings: some View {
         ColorButton(
-            color: ColorfulPreset.colorful.colors,
+            color: ColorfulPreset.colorful.colors.map { .init($0) },
             image: Image(systemName: "gear"),
             title: LocalizedStringKey("Settings")
         )
